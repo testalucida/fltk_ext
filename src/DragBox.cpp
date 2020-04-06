@@ -13,6 +13,7 @@
 DragBox::DragBox(int x, int y, int w, int h, const char *lbl) :
 		Fl_Box(x, y, w, h, lbl) {
 	box(FL_FLAT_BOX);
+	color( FL_LIGHT2 );
 }
 
 DragBox::~DragBox() {
@@ -46,17 +47,18 @@ void DragBox::move(int delta_x, int delta_y) {
 }
 
 void DragBox::draw_custom() {
+	Fl_Color memo = fl_color();
 	fl_color(FL_DARK3);
 	//todo: needs clipping
 	fl_draw( "your", x() + 3, y() + 15 );
 	fl_draw( "drawing", x() + 3, y() + 30 );
 	fl_draw( "code", x() + 3, y() + 45 );
 	fl_draw( "here", x() + 3, y() + 60 );
+	fl_color( memo );
 }
 
 void DragBox::draw() {
-	draw_box();   //don't draw_box() - if we do and color != FL_WHITE
-	              // the selection squares are visible
+	draw_box();
 	int xx = this->x();
 	int yy = this->y();
 	int ww = this->w();
@@ -109,6 +111,13 @@ int DragBox::handle(int e) {
 	//static int offset[2] = { 0, 0 };
 	switch (e) {
 	case FL_PUSH: {
+		fprintf( stderr, "DragBox::handle( PUSH )\n" );
+		if( Fl::event_button() == FL_RIGHT_MOUSE ) {
+			if( _selected ) {
+				onRightMouse();
+			}
+			return 1;
+		}
 		//prepare resizing if PUSH event occured within the resizing area,
 		//else prepare dragging:
 		Fl_Cursor crsr = getDragOrResizeCursor(Fl::event_x(), Fl::event_y());

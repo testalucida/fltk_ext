@@ -19,6 +19,9 @@ typedef void (*MoveCallback)( DragBox*, int delta_x, int delta_y, void* userdata
 
 /**
  * Draggable, resizable and selectable Fl_Box.
+ * Default box is FL_FLAT_BOX, color is FL_LIGHT2.
+ * You are supposed to inherit YourDragBox from DragBox and
+ * override method draw_custom().
  */
 class DragBox : public Fl_Box /*, public IChild*/ {
 public:
@@ -28,14 +31,19 @@ public:
 	virtual void registerMoveCallback( MoveCallback cb, void* userdata );
 	virtual void toggleSelection( bool on );
 	virtual bool isSelected() const;
+	/** Called whenever a PUSH event occurs triggered
+	 * by the right mouse button.
+	 * Override this method to achieve custom behaviour.
+	 */
+	virtual void onRightMouse() { fprintf(stderr, "PUSH with right mouse\n"); }
 	virtual void move( int delta_x, int delta_y );
+	/** Overrides Fl_Box::draw() due to drawing selectionSquares when selected. */
+	virtual void draw();
+protected:
 	/** Implement your own drawing code.
 	 * It will be invoked whenever Fl_Box::draw() is called. */
 	virtual void draw_custom();
-	/** overrides Fl_Box::draw() because we want to suppress
-	 * draw_box() - due to the selection squares. */
-	virtual void draw();
-protected:
+
 	int handle( int );
 	/**
 	 * Draws 4 small yellow squares in the corners of this box.
@@ -44,12 +52,12 @@ protected:
 	void drawSelectionSquares( int x, int y, int w, int h, Fl_Color );
 	Fl_Cursor getDragOrResizeCursor( int x, int y );
 	/**
-		 * checks if given x, y are in one of the 4 selection squares.
-		 * returns 1 if x/y are in the top left square
-		 * returns 2 if x/y are in the top right square and so on.
-		 * returns 0 if x/y are not in one of the squares.
-		 */
-		int isInSelectionSquare( int x, int y );
+	 * checks if given x, y are in one of the 4 selection squares.
+	 * returns 1 if x/y are in the top left square
+	 * returns 2 if x/y are in the top right square and so on.
+	 * returns 0 if x/y are not in one of the squares.
+	 */
+	int isInSelectionSquare( int x, int y );
 
 private:
 	bool _selected = false;
