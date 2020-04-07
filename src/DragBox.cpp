@@ -87,24 +87,6 @@ void DragBox::drawSelectionSquares( int x, int y, int w, int h, Fl_Color color )
 	fl_rectf( x + w - len, y + h - len, len, len, color );
 	//small square bottom left:
 	fl_rectf( x, y + h - len, len, len, color );
-
-
-//	uchar r, g, b;
-//	if (_selected) {
-//		r = 249, g = 255, b = 0; //yellow
-//	} else {
-//		r = 255, g = 255, b = 255; //color of canvas
-//	}
-//	Fl_Color colr = FL_YELLOW;
-//	//small square top left:
-//	fl_rectf(x, y, len, len, r, g, b);
-//	//small square top right:
-//	fl_rectf(x + w - len, y, len, len, r, g, b);
-//	//small square bottom right:
-//	fl_rectf(x + w - len, y + h - len, len, len, r, g, b);
-//	//small square bottom left:
-//	fl_rectf(x, y + h - len, len, len, r, g, b);
-
 }
 
 int DragBox::handle(int e) {
@@ -114,6 +96,7 @@ int DragBox::handle(int e) {
 		fprintf( stderr, "DragBox::handle( PUSH )\n" );
 		if( Fl::event_button() == FL_RIGHT_MOUSE ) {
 			if( _selected ) {
+				//let inherited classes do their own work:
 				onRightMouse();
 			}
 			return 1;
@@ -160,9 +143,11 @@ int DragBox::handle(int e) {
 			if (_moveCallback) {
 				(_moveCallback)(this, dd.delta_x, dd.delta_y, _movecb_userdata);
 			}
+			onMovedOrResized( false, dd.delta_x, dd.delta_y );
 		} else {
 			//resize
-			_resizeHelper.resizeWidget();
+			DeltaXY delta = _resizeHelper.resizeWidget();
+			onMovedOrResized( true, delta.delta_x, delta.delta_y );
 		}
 		parent()->redraw();
 		return (1);

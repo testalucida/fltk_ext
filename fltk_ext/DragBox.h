@@ -31,26 +31,39 @@ public:
 	virtual void registerMoveCallback( MoveCallback cb, void* userdata );
 	virtual void toggleSelection( bool on );
 	virtual bool isSelected() const;
-	/** Called whenever a PUSH event occurs triggered
-	 * by the right mouse button.
-	 * Override this method to achieve custom behaviour.
-	 */
-	virtual void onRightMouse() { fprintf(stderr, "PUSH with right mouse\n"); }
 	virtual void move( int delta_x, int delta_y );
+
 	/** Overrides Fl_Box::draw() due to drawing selectionSquares when selected. */
 	virtual void draw();
 protected:
-	/** Implement your own drawing code.
-	 * It will be invoked whenever Fl_Box::draw() is called. */
+	/**
+	 * To be used by inherited classes:
+	 * Called whenever a PUSH event occurs triggered
+	 * by the right mouse button.
+	 * Override this method to achieve custom behaviour. */
+	virtual void onRightMouse() {}
+
+	/**
+	 * To be used by inherited classes:
+	 * Called whenever this box is moved or resized.
+	 * Redrawing will be done by DragBox after returning from this method.
+	 */
+	virtual void onMovedOrResized( bool resized, int delta_x, int delta_y ) {}
+
+	/**
+	 * To be used by inherited classes to implement their own drawing code.
+	 * Method will be invoked whenever Fl_Box::draw() is called. */
 	virtual void draw_custom();
 
 	int handle( int );
+
 	/**
 	 * Draws 4 small yellow squares in the corners of this box.
 	 * They are completely drawn within the box.
 	 */
 	void drawSelectionSquares( int x, int y, int w, int h, Fl_Color );
 	Fl_Cursor getDragOrResizeCursor( int x, int y );
+
 	/**
 	 * checks if given x, y are in one of the 4 selection squares.
 	 * returns 1 if x/y are in the top left square
