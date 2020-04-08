@@ -201,3 +201,11 @@ int DragBox::isInSelectionSquare(int x, int y) {
 	return 0;
 }
 
+void DragBox::getCenter(int &x, int &y) const {
+	x = (2 * this->x() + this->w()) / 2;
+	y = (2 * this->y() + this->h()) / 2;
+}
+
+
+
+

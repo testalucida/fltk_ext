@@ -35,6 +35,10 @@ public:
 
 	/** Overrides Fl_Box::draw() due to drawing selectionSquares when selected. */
 	virtual void draw();
+
+	/** Calculates the geometric center of this box
+	 * and provides its coordinates in x and y. */
+	void getCenter( int& x, int& y ) const;
 protected:
 	/**
 	 * To be used by inherited classes:

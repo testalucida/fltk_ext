@@ -64,10 +64,16 @@ public:
 
 	void end();
 
+	virtual void draw();
+
 	std::vector<DragBox*> getSelectedDragBoxes() const;
 
 protected:
 	int handle(int evt);
+	/** Override this for drawing before canvas draws itself */
+	//virtual void draw_before() {}
+	/** Override this for drawing after canvas drew itself */
+	virtual void draw_then() {}
 
 private:
 	DragBox* tryDragBoxCast( Fl_Widget* ) const;
