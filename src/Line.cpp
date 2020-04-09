@@ -37,17 +37,21 @@ bool Line::isPointOnLine( Point& p ) const {
 	return (p.y == _m*p.x + _b);
 }
 
-bool Line::isPointInSegment( Point& p ) const {
+bool Line::isPointInSegment( const Point& p ) const {
+	return isPointInSegment( p.x, p.y );
+}
+
+bool Line::isPointInSegment( int x, int y ) const {
 	if( _isVertical ) {
 		int ymax = max( _y1, _y2 );
 		int ymin = min( _y1, _y2 );
-		return ( p.x == _x1 && p.y <= ymax && p.y >= ymin );
+		return ( x == _x1 && y <= ymax && y >= ymin );
 	} else {
-		if( p.x > _x1 && p.x > _x2 ) return false;
-		if( p.x < _x1 && p.x < _x2 ) return false;
-		if( p.y > _y1 && p.y > _y2 ) return false;
-		if( p.y < _y1 && p.y < _y2 ) return false;
-		return (p.y == _m*p.x + _b);
+		if( x > _x1 && x > _x2 ) return false;
+		if( x < _x1 && x < _x2 ) return false;
+		if( y > _y1 && y > _y2 ) return false;
+		if( y < _y1 && y < _y2 ) return false;
+		return (y == _m*x + _b);
 	}
 }
 
@@ -73,10 +77,19 @@ void Line::computeLine() {
 }
 
 Intersection Line::getIntersection(const Line &line ) const {
-	if( _isVertical || line.isVertical() )
-		return getIntersectionVertical( line );
-
 	Intersection intersect;
+	LinesRelation rel = getLinesRelation( line );
+	if( rel.parallel || rel.collinear ) {
+		intersect.intersects = false;
+		intersect.linesParallel = rel.parallel;
+		intersect.linesCollinear = rel.collinear;
+		return intersect;
+	}
+
+	if( _isVertical || line.isVertical() ) {
+		return getIntersectionVertical( line );
+	}
+
 	// line equation: y = m*x + b
 	// We have _m and _b of our line and of the given line.
 	// The Intersection point we are searching for is contained
@@ -89,18 +102,16 @@ Intersection Line::getIntersection(const Line &line ) const {
 	// this->_m*x - line._m*x = line._b - this->_b
 	// x * (this->_m - line._m) = line._b - this->_b
 	// x = (line._b - this->_b) / (this->_m - line._m)
-	int x = round( ( line.b() - this->_b ) / ( this->_m - line.m() ) );
+	intersect.x = round( ( line.b() - this->_b ) / ( this->_m - line.m() ) );
 	// Now having x, we can easily compute y:
-	int y = this->_m * x + this->_b;
+	intersect.y = this->_m * intersect.x + this->_b;
 
-	Point X = {x, y};
+	Point X = {intersect.x, intersect.y};
 	//Now check, if the intersection is within the defined segments:
 	if( !isLinePointInSegment( X ) ||  !line.isLinePointInSegment( X ) ) {
-		intersect.intersects = false;
+		intersect.withinSegments = false;
 	} else {
-		intersect.intersects = true;
-		intersect.x = x;
-		intersect.y = y;
+		intersect.withinSegments = true;
 	}
 
 	return intersect;
@@ -108,15 +119,20 @@ Intersection Line::getIntersection(const Line &line ) const {
 
 inline Intersection Line::getIntersectionVertical( const Line& line ) const {
 	Intersection intersect;
-	if( m() == line.m() ) { //lines parallel
-		intersect.intersects = false;
-		return intersect;
-	}
 	const Line* vline = _isVertical ? this : &line;
-	const Line* other = vline == this ? &line : this;
+	const Line* other = ( vline == this ) ? &line : this;
 
 	intersect.x = vline->x1();
-	intersect.intersects = ???
+	intersect.y = other->m() * intersect.x + other->b();
+
+	Point X = {intersect.x, intersect.y};
+	//Now check, if the intersection is within the defined segments:
+	if( !isLinePointInSegment( X ) ||  !line.isLinePointInSegment( X ) ) {
+		intersect.withinSegments = false;
+	} else {
+		intersect.withinSegments = true;
+	}
+
 	return intersect;
 }
 
@@ -135,6 +151,56 @@ bool Line::getY(int x, int &y) const {
 	y = _m * x + _b;
 	return true;
 }
+
+LinesRelation Line::getLinesRelation(const Line& line ) const {
+	LinesRelation rel;
+	if( _isVertical && line.isVertical() ) {
+		//either m and b is 0
+		rel.intersecting = false;
+		if( _x1 == line.x1() ) {
+			rel.collinear = true;
+ 		} else {
+ 			rel.parallel = true;
+ 		}
+		return rel;
+	}
+	if( _m == line.m() && !(_m == 0 && line.m() == 0 ) ) {
+		//lines are parallel, maybe even collinear
+		rel.intersecting = false;
+		if( _b == line.b() ) {
+			rel.collinear = true;
+		} else {
+			rel.parallel = true;
+		}
+		return rel;
+	}
+	//still here ==> intersecting lines
+	return rel;
+}
+
+bool Line::isPointNearby(int x, int y, int radius) const {
+	//distance of point from line:
+	// see https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+	//If the line passes through two points P1=(x1,y1) and P2=(x2,y2)
+	//then the distance of (x0,y0) from the line is:
+
+	//int dist = abs( (y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1  ) /
+	// 		     sqrt( (y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1) );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

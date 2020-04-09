@@ -13,9 +13,28 @@ struct Point {
 	int y = 0;
 };
 
+/**
+ * Relation of 2 Lines in a plane
+ */
+struct LinesRelation {
+	bool intersecting = true;
+	bool parallel = false;
+	bool collinear = false;
+};
 
 struct Intersection : public Point {
-	bool intersects = false;
+	/**
+	 * 2 lines always intersect somewhere except of
+	 * them being parallel or collinear.
+	 */
+	bool intersects = true;
+
+	/** lines intersect but the intersection
+	 * is beyond of one of the segments.
+	 */
+	bool withinSegments = false;
+	bool linesParallel = false;
+	bool linesCollinear = false;
 };
 
 class Line {
@@ -24,7 +43,7 @@ public:
 	Line( int x1, int y1, int x2, int y2 );
 
 	/**
-	 * vertical lines a specific because they can't be
+	 * vertical lines are special because they can't be
 	 * expressed by the general line equation y = m*x + b
 	 */
 	bool isVertical() const { return _isVertical; }
@@ -33,7 +52,8 @@ public:
 	 * checks if p is within the line segment defined
 	 * by the points used for creating this line.
 	 */
-	bool isPointInSegment( Point& ) const;
+	bool isPointInSegment( const Point& ) const;
+	bool isPointInSegment( int x, int y ) const;
 
 	/**
 	 * Checks if the passed Point which is part of
@@ -49,9 +69,25 @@ public:
 	bool isPointOnLine( Point& p ) const;
 
 	/**
-	 * checks if the given line segment (!) intersects
-	 * with this line segment and if so returns the
+	 * Checks if the given point x/y is nearby this
+	 * line. 'Nearby' is specified by the given radius.
+	 */
+	bool isPointNearby( int x, int y, int radius ) const;
+
+	/**
+	 * checks position of this line related to the
+	 * passed line.
+	 */
+	LinesRelation getLinesRelation( const Line& ) const;
+
+	/**
+	 * checks if the given line intersects
+	 * with this line and if so returns the
 	 * intersection point.
+	 * Using Intersection.withinSegment one may differentiate
+	 * if the intersection is located within the segments
+	 * of both of the involved lines. The segment of a line
+	 * is defined by the points used to create them.
 	 */
 	Intersection getIntersection( const Line& ) const;
 
