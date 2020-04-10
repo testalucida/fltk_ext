@@ -178,14 +178,20 @@ LinesRelation Line::getLinesRelation(const Line& line ) const {
 	return rel;
 }
 
-bool Line::isPointNearby(int x, int y, int radius) const {
+int Line::getDistance( int x, int y ) const {
 	//distance of point from line:
 	// see https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
 	//If the line passes through two points P1=(x1,y1) and P2=(x2,y2)
 	//then the distance of (x0,y0) from the line is:
-
-	//int dist = abs( (y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1  ) /
+	//int dist = abs( (y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1 ) /
 	// 		     sqrt( (y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1) );
+
+	int y2_y1 = _y2 - _y1;
+	int x2_x1 = _x2 - _x1;
+	int dist = abs( y2_y1 * x - x2_x1 * y + _x2 * _y1 - _y2 * _x1 ) /
+			   sqrt( y2_y1 * y2_y1 + x2_x1 * x2_x1 );
+
+	return dist;
 }
 
 

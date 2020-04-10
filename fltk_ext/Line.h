@@ -69,10 +69,10 @@ public:
 	bool isPointOnLine( Point& p ) const;
 
 	/**
-	 * Checks if the given point x/y is nearby this
-	 * line. 'Nearby' is specified by the given radius.
+	 * Gets the distance between a point given by
+	 * x, y and this line.
 	 */
-	bool isPointNearby( int x, int y, int radius ) const;
+	int getDistance( int x, int y ) const;
 
 	/**
 	 * checks position of this line related to the
