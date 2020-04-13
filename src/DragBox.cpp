@@ -66,7 +66,8 @@ void DragBox::draw() {
 
 	if( !_selected ) {
 		//make selection squares invisible
-		drawSelectionSquares( xx, yy, ww, hh, color() );
+		Fl_Color colr = box() == FL_NO_BOX ? parent()->color() : color();
+		drawSelectionSquares( xx, yy, ww, hh, colr );
 	}
 
 	draw_custom(); //call user's drawing code
