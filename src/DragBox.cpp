@@ -58,7 +58,9 @@ void DragBox::draw_custom() {
 }
 
 void DragBox::draw() {
-	draw_box();
+	fl_push_clip( x(), y(), w(), h() );
+	//draw_box();
+	Fl_Box::draw();
 	int xx = this->x();
 	int yy = this->y();
 	int ww = this->w();
@@ -75,6 +77,8 @@ void DragBox::draw() {
 	if( _selected ) {
 		drawSelectionSquares(xx, yy, ww, hh, FL_YELLOW );
 	}
+
+	fl_pop_clip();
 }
 
 void DragBox::drawSelectionSquares( int x, int y, int w, int h, Fl_Color color ) {
