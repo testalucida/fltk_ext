@@ -15,7 +15,6 @@ FlxStatusBox::FlxStatusBox( int x, int y, int w, int h )
 }
 
 FlxStatusBox::~FlxStatusBox() {
-	// TODO Auto-generated destructor stub
 }
 
 void FlxStatusBox::setStatusText( const char *text, float time_to_reset ) {
@@ -25,6 +24,7 @@ void FlxStatusBox::setStatusText( const char *text, float time_to_reset ) {
 
 void FlxStatusBox::resetStatus() {
 	label( "" );
+	Fl::remove_timeout( resetStatus_static, this );
 }
 
 void FlxStatusBox::resetStatus_static( void* data ) {
