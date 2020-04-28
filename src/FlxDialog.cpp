@@ -70,7 +70,7 @@ Fl_Group* FlxDialog::createClientAreaGroup( Fl_Boxtype boxtype,
 int FlxDialog::show( bool modally ) {
 	if( modally ) {
 		Fl_Double_Window::set_modal();
-		//Note: dialog will be placed int0 the middle of the
+		//Note: dialog will be placed int0 the center of the
 		//application disregarding given x and y position
 	} else {
 		Fl_Double_Window::set_non_modal();

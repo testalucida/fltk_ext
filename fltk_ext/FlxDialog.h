@@ -34,6 +34,8 @@ public:
 protected:
 	static void onOkCancel_static( Fl_Widget* w, void* data );
 	void onOkCancel( Fl_Button* pBtn );
+	/** override this method in order to set a custom boxtype color etc.
+	 * Default is FL_THIN_UP_BOX, color 53 and visible focus turned off.*/
 	virtual void setButtonLook( Fl_Button* btn );
 	/** To be overridden by inherited classes.
 	 *  Returns the widget to focus when show()ing this dialog. */
