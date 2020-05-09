@@ -98,26 +98,29 @@ int DragBox::handle(int e) {
 	//static int offset[2] = { 0, 0 };
 	switch (e) {
 	case FL_PUSH: {
-		fprintf( stderr, "DragBox::handle( PUSH )\n" );
-		if( Fl::event_button() == FL_RIGHT_MOUSE ) {
-			if( _selected ) {
-				//let inherited classes do their own work:
-				onRightMouse();
-			}
-			return 1;
-		}
-		//prepare resizing if PUSH event occured within the resizing area,
-		//else prepare dragging:
-		Fl_Cursor crsr = getDragOrResizeCursor(Fl::event_x(), Fl::event_y());
-		fl_cursor(crsr);
+		//fprintf( stderr, "DragBox::handle( PUSH )\n" );
+//		if( Fl::event_button() == FL_RIGHT_MOUSE ) {
+//			onRightMouse( _selected );
+//			if( _selected ) {
+//				//let inherited classes do their own work:
+//				//onRightMouse();
+//			}
+//			return 1;
+//		}
+		if( Fl::event_button() == FL_LEFT_MOUSE ) {
+			//prepare resizing if PUSH event occured within the resizing area,
+			//else prepare dragging:
+			Fl_Cursor crsr = getDragOrResizeCursor(Fl::event_x(), Fl::event_y());
+			fl_cursor(crsr);
 
-		if (crsr == FL_CURSOR_MOVE) {
-			_dragHelper.prepareDragging(x(), y());
-			fprintf( stderr, "prepare drag\n");
-			_draggingPrepared = true;
-		} else {
-			_resizeHelper.prepareResizing(this);
-			fprintf( stderr, "prepare resize\n");
+			if (crsr == FL_CURSOR_MOVE) {
+				_dragHelper.prepareDragging(x(), y());
+				fprintf( stderr, "prepare drag\n");
+				_draggingPrepared = true;
+			} else {
+				_resizeHelper.prepareResizing(this);
+				fprintf( stderr, "prepare resize\n");
+			}
 		}
 
 		//do selection callback to unselect other selected symbols
@@ -132,6 +135,10 @@ int DragBox::handle(int e) {
 		}
 		if (draw) {
 			redraw();
+		}
+
+		if( Fl::event_button() == FL_RIGHT_MOUSE ) {
+			onRightMouse( _selected );
 		}
 		return 1;
 	}

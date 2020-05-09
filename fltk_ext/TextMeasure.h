@@ -10,6 +10,7 @@
 
 
 #include <FL/Enumerations.H>
+#include <vector>
 
 struct Size {
 	int w = 0;

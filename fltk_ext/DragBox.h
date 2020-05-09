@@ -41,11 +41,19 @@ public:
 	void getCenter( int& x, int& y ) const;
 protected:
 	/**
+	 * @deprecated
+	 * To be used by inherited classes:
+	 * Called whenever a PUSH event occurs triggered
+	 * by the right mouse button AND this box is selected.
+	 * Override this method to achieve custom behaviour. */
+	//virtual void onRightMouse() {}
+
+	/**
 	 * To be used by inherited classes:
 	 * Called whenever a PUSH event occurs triggered
 	 * by the right mouse button.
 	 * Override this method to achieve custom behaviour. */
-	virtual void onRightMouse() {}
+	virtual void onRightMouse( bool isBoxSelected ) {}
 
 	/**
 	 * To be used by inherited classes:
