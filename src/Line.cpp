@@ -76,13 +76,13 @@ void Line::computeLine() {
 	_b = _y2 - (float)(_m * _x2);
 }
 
-Intersection Line::getIntersection(const Line &line ) const {
-	Intersection intersect;
+IntersectionPtr Line::getIntersection(const Line &line ) const {
+	IntersectionPtr intersect( new Intersection );
 	LinesRelation rel = getLinesRelation( line );
 	if( rel.parallel || rel.collinear ) {
-		intersect.intersects = false;
-		intersect.linesParallel = rel.parallel;
-		intersect.linesCollinear = rel.collinear;
+		intersect->intersects = false;
+		intersect->linesParallel = rel.parallel;
+		intersect->linesCollinear = rel.collinear;
 		return intersect;
 	}
 
@@ -102,35 +102,35 @@ Intersection Line::getIntersection(const Line &line ) const {
 	// this->_m*x - line._m*x = line._b - this->_b
 	// x * (this->_m - line._m) = line._b - this->_b
 	// x = (line._b - this->_b) / (this->_m - line._m)
-	intersect.x = round( ( line.b() - this->_b ) / ( this->_m - line.m() ) );
+	intersect->x = round( ( line.b() - this->_b ) / ( this->_m - line.m() ) );
 	// Now having x, we can easily compute y:
-	intersect.y = this->_m * intersect.x + this->_b;
+	intersect->y = this->_m * intersect->x + this->_b;
 
-	Point X = {intersect.x, intersect.y};
+	Point X = {intersect->x, intersect->y};
 	//Now check, if the intersection is within the defined segments:
 	if( !isLinePointInSegment( X ) ||  !line.isLinePointInSegment( X ) ) {
-		intersect.withinSegments = false;
+		intersect->withinSegments = false;
 	} else {
-		intersect.withinSegments = true;
+		intersect->withinSegments = true;
 	}
 
 	return intersect;
 }
 
-inline Intersection Line::getIntersectionVertical( const Line& line ) const {
-	Intersection intersect;
+inline IntersectionPtr Line::getIntersectionVertical( const Line& line ) const {
+	IntersectionPtr intersect( new Intersection );
 	const Line* vline = _isVertical ? this : &line;
 	const Line* other = ( vline == this ) ? &line : this;
 
-	intersect.x = vline->x1();
-	intersect.y = other->m() * intersect.x + other->b();
+	intersect->x = vline->x1();
+	intersect->y = other->m() * intersect->x + other->b();
 
-	Point X = {intersect.x, intersect.y};
+	Point X = {intersect->x, intersect->y};
 	//Now check, if the intersection is within the defined segments:
 	if( !isLinePointInSegment( X ) ||  !line.isLinePointInSegment( X ) ) {
-		intersect.withinSegments = false;
+		intersect->withinSegments = false;
 	} else {
-		intersect.withinSegments = true;
+		intersect->withinSegments = true;
 	}
 
 	return intersect;
@@ -193,6 +193,17 @@ int Line::getDistance( int x, int y ) const {
 
 	return dist;
 }
+
+double Line::getGradientAngle() const {
+	return atan( _m ) * 180 / PI;
+}
+
+Point Line::getCenter() const {
+    return {( _x1 + _x2 )/2, ( _y1 + _y2 )/2};
+}
+
+
+
 
 
 

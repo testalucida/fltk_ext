@@ -8,10 +8,14 @@
 #ifndef FLTK_EXT_LINE_H_
 #define FLTK_EXT_LINE_H_
 
+#include <memory>
+
 struct Point {
 	int x = 0;
 	int y = 0;
 };
+
+#define PI 3.14159265
 
 /**
  * Relation of 2 Lines in a plane
@@ -37,10 +41,13 @@ struct Intersection : public Point {
 	bool linesCollinear = false;
 };
 
+typedef std::unique_ptr<Intersection> IntersectionPtr;
+
 class Line {
 public:
 	Line( Point p1, Point p2 );
 	Line( int x1, int y1, int x2, int y2 );
+	virtual ~Line() {}
 
 	/**
 	 * vertical lines are special because they can't be
@@ -84,12 +91,17 @@ public:
 	 * checks if the given line intersects
 	 * with this line and if so returns the
 	 * intersection point.
-	 * Using Intersection.withinSegment one may differentiate
+	 * Querying Intersection.withinSegment one may differentiate
 	 * if the intersection is located within the segments
-	 * of both of the involved lines. The segment of a line
-	 * is defined by the points used to create them.
+	 * of both of the involved lines.
+	 * The segment of a line is defined by the points used to create them.
 	 */
-	Intersection getIntersection( const Line& ) const;
+	IntersectionPtr getIntersection( const Line& ) const;
+
+	/** gets the center of the line segment defined by
+	 * the points used to construct this line.
+	 */
+	Point getCenter() const;
 
 	/** gets y value to a given x value.
 	 * It is not guaranteed that x/y is located within
@@ -99,19 +111,22 @@ public:
 	 * an y value cannot be determined unambiguously.
 	 */
 	bool getY( int x, int& y ) const;
-
+	/** returns the slope of this line */
 	inline float m() const { return _m; }
+	/** return the y shift of this line */
 	inline float b() const { return _b; }
 	inline int x1() const { return _x1; }
 	inline int x2() const { return _x2; }
 	inline int y1() const { return _y1; }
 	inline int y2() const { return _y2; }
+	/** gets the angle of this line with the x axis */
+	double getGradientAngle() const;
 
 private:
 	inline void computeLine();
 	inline int max( int a, int b ) const;
 	inline int min( int a, int b ) const;
-	inline Intersection getIntersectionVertical( const Line& ) const;
+	inline IntersectionPtr getIntersectionVertical( const Line& ) const;
 
 private:
 	int _x1, _y1, _x2, _y2;
