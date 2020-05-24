@@ -8,6 +8,8 @@
 #ifndef FLTK_EXT_FLXRECT_H_
 #define FLTK_EXT_FLXRECT_H_
 
+#include <memory>
+
 struct FlxRect {
 	int x = 0;
 	int y = 0;
@@ -15,6 +17,6 @@ struct FlxRect {
 	int h = 0;
 };
 
-
+typedef std::unique_ptr<FlxRect> FlxRectPtr;
 
 #endif /* FLTK_EXT_FLXRECT_H_ */

@@ -65,7 +65,6 @@ void Canvas::end() {
 }
 
 void Canvas::draw() {
-	//draw_before();
 	Fl_Scroll::draw();
 	draw_then();
 }

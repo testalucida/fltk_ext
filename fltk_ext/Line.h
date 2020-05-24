@@ -111,7 +111,7 @@ public:
 	 * an y value cannot be determined unambiguously.
 	 */
 	bool getY( int x, int& y ) const;
-	/** returns the slope of this line */
+	/** returns the gradient of this line */
 	inline float m() const { return _m; }
 	/** return the y shift of this line */
 	inline float b() const { return _b; }
@@ -135,6 +135,6 @@ private:
 	bool _isVertical = false;
 };
 
-
+typedef std::unique_ptr<Line> LinePtr;
 
 #endif /* FLTK_EXT_LINE_H_ */

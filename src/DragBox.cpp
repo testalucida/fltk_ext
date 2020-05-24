@@ -47,14 +47,9 @@ void DragBox::move(int delta_x, int delta_y) {
 }
 
 void DragBox::draw_custom() {
-	Fl_Color memo = fl_color();
-	fl_color(FL_DARK3);
-	//todo: needs clipping
-	fl_draw( "your", x() + 3, y() + 15 );
-	fl_draw( "drawing", x() + 3, y() + 30 );
-	fl_draw( "code", x() + 3, y() + 45 );
-	fl_draw( "here", x() + 3, y() + 60 );
-	fl_color( memo );
+	//in classes inherited from DragBox
+	//you may override draw_custom()
+	//and enter your drawing code here.
 }
 
 void DragBox::draw() {
