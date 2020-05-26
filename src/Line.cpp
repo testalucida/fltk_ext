@@ -107,7 +107,7 @@ IntersectionPtr Line::getIntersection(const Line &line ) const {
 	intersect->y = this->_m * intersect->x + this->_b;
 
 	Point X = {intersect->x, intersect->y};
-	//Now check, if the intersection is within the defined segments:
+	//Now check if the intersection is within the defined segments:
 	if( !isLinePointInSegment( X ) ||  !line.isLinePointInSegment( X ) ) {
 		intersect->withinSegments = false;
 	} else {
@@ -201,6 +201,57 @@ double Line::getGradientAngle() const {
 Point Line::getCenter() const {
     return {( _x1 + _x2 )/2, ( _y1 + _y2 )/2};
 }
+
+LinePtr Line::getPerpendicular( int x, int y ) const {
+	//x, y represent Point F
+	//the interception Point be C with cx/cy
+	//so the perpendicular bisector is named CF
+	int cx, cy;
+	if( _isVertical ) {
+		//handle particular case of vertical line
+		cx = _x1;
+		cy = y;
+	} else if( _y1 == _y2 ) {
+		//handle particular case of horizontal line
+		cx = x;
+		cy = _y1;
+	} else {
+		//1st: get gradient of CF
+		float m2 = -1/_m;
+		//2nd: get the y-intercept of CF:
+		//     y = m2*x + b2 (equation of CF)
+		float b2 = y - m2*x;
+		//3rd: get cx using the two equations of this line and CF
+		//     cy = _m*cx + _b (this line)
+		//     cy = m*cx + b2
+		//     _m*cx + _b = m*cx + b2
+		//     _m*cx - m*cx = b2 - _b
+		//     cx*( _m - m ) = b2 - _b
+		cx = round( ( b2 - _b ) / ( _m - m2 ) );
+		//4th: get cy
+		cy = round( _m*cx + b2 );
+	}
+	LinePtr line( new Line( x, y, cx, cy ) );
+	return line;
+}
+
+float Line::getLength() const {
+	return sqrt( pow( _x2 - _x1, 2 ) + pow( _y2 - _y1, 2 ) );
+}
+
+CircleIntersectionsPtr Line::getCircleIntersections( float cx, float cy,
+		                                             float r ) const
+{
+	//circle equation (let x,y be the coords of the intersections:
+	//(x - cx)^2 + (y - cy)^2 = r2
+	//solve for y:  (www.mathelounge.de/13159/lautet-funktionsgleichung-eines-kreises-dessen-mittelpunkt)
+	//y = cy ± √(r2 - (x-cx)^2)
+
+	//line
+
+
+}
+
 
 
 

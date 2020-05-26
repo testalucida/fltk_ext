@@ -110,7 +110,7 @@ int DragBox::handle(int e) {
 
 			if (crsr == FL_CURSOR_MOVE) {
 				_dragHelper.prepareDragging(x(), y());
-				fprintf( stderr, "prepare drag\n");
+				//fprintf( stderr, "prepare drag\n");
 				_draggingPrepared = true;
 			} else {
 				_resizeHelper.prepareResizing(this);

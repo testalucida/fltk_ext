@@ -86,7 +86,7 @@ void Canvas::onChildMoved(DragBox *box, int delta_x, int delta_y) {
 int Canvas::handle(int evt) {
 	switch (evt) {
 	case FL_PUSH: {
-		fprintf( stderr, "Canvas::handle( PUSH )\n" );
+		//fprintf( stderr, "Canvas::handle( PUSH )\n" );
 		int rc;
 		Fl_Widget *w = Fl::belowmouse();
 		if (w == this) {

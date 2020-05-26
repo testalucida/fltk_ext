@@ -15,6 +15,16 @@ struct Point {
 	int y = 0;
 };
 
+typedef std::unique_ptr<Point> PointPtr;
+
+struct CircleIntersections {
+	Point X1;
+	Point X2;
+	int numberOfIntersections = 0;
+};
+
+typedef std::unique_ptr<CircleIntersections> CircleIntersectionsPtr;
+
 #define PI 3.14159265
 
 /**
@@ -42,6 +52,9 @@ struct Intersection : public Point {
 };
 
 typedef std::unique_ptr<Intersection> IntersectionPtr;
+
+class Line;
+typedef std::unique_ptr<Line> LinePtr;
 
 class Line {
 public:
@@ -81,6 +94,9 @@ public:
 	 */
 	int getDistance( int x, int y ) const;
 
+	/** gets the length between the points this line was created with */
+	float getLength() const;
+
 	/**
 	 * checks position of this line related to the
 	 * passed line.
@@ -111,16 +127,31 @@ public:
 	 * an y value cannot be determined unambiguously.
 	 */
 	bool getY( int x, int& y ) const;
+
 	/** returns the gradient of this line */
 	inline float m() const { return _m; }
+
 	/** return the y shift of this line */
 	inline float b() const { return _b; }
+
 	inline int x1() const { return _x1; }
 	inline int x2() const { return _x2; }
 	inline int y1() const { return _y1; }
 	inline int y2() const { return _y2; }
+
 	/** gets the angle of this line with the x axis */
 	double getGradientAngle() const;
+
+	/** Gets the perpendicular from a given point to this line.
+	 * The given point must not be part of this line.
+	 * The returned line will be constructed using the
+	 * given point x/y and the intersection between
+	 * this line and the perpendicular.
+	 * You can get the intersection's coords by calling x2() and y().
+	 * */
+	LinePtr getPerpendicular( int x, int y ) const;
+
+	CircleIntersectionsPtr getCircleIntersections( float cx, float cy, float r ) const;
 
 private:
 	inline void computeLine();
@@ -130,11 +161,9 @@ private:
 
 private:
 	int _x1, _y1, _x2, _y2;
-	float _m = 0;
-	float _b = 0;
+	float _m = 0;  //gradient; if 0: parallel x axis
+	float _b = 0;  //y-intercept; not defined for vertical lines
 	bool _isVertical = false;
 };
-
-typedef std::unique_ptr<Line> LinePtr;
 
 #endif /* FLTK_EXT_LINE_H_ */
