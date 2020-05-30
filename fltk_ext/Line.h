@@ -18,8 +18,8 @@ struct Point {
 typedef std::unique_ptr<Point> PointPtr;
 
 struct CircleIntersections {
-	Point X1;
-	Point X2;
+	float x1, y1;
+	float x2, y2;
 	int numberOfIntersections = 0;
 };
 
@@ -80,7 +80,8 @@ public:
 	 * this line, is located within the segment defined
 	 * by the points used for creating it.
 	 */
-	bool isLinePointInSegment( Point& ) const;
+	bool isLinePointInSegment( const Point& ) const;
+	bool isLinePointInSegment( int x, int y ) const;
 
 	/**
 	 * checks if p is on the line defined

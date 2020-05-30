@@ -55,14 +55,28 @@ bool Line::isPointInSegment( int x, int y ) const {
 	}
 }
 
-bool Line::isLinePointInSegment( Point& p ) const {
+bool Line::isLinePointInSegment( const Point& p ) const {
+	return isLinePointInSegment( p.x, p.y );
+//	if( _isVertical ) {
+//		return isPointInSegment( p );
+//	} else {
+//		if( p.x > _x1 && p.x > _x2 ) return false;
+//		if( p.x < _x1 && p.x < _x2 ) return false;
+//		if( p.y > _y1 && p.y > _y2 ) return false;
+//		if( p.y < _y1 && p.y < _y2 ) return false;
+//
+//		return true;
+//	}
+}
+
+bool Line::isLinePointInSegment( int x, int y ) const {
 	if( _isVertical ) {
-		return isPointInSegment( p );
+		return isPointInSegment( x, y );
 	} else {
-		if( p.x > _x1 && p.x > _x2 ) return false;
-		if( p.x < _x1 && p.x < _x2 ) return false;
-		if( p.y > _y1 && p.y > _y2 ) return false;
-		if( p.y < _y1 && p.y < _y2 ) return false;
+		if( x > _x1 && x > _x2 ) return false;
+		if( x < _x1 && x < _x2 ) return false;
+		if( y > _y1 && y > _y2 ) return false;
+		if( y < _y1 && y < _y2 ) return false;
 
 		return true;
 	}
@@ -242,38 +256,71 @@ float Line::getLength() const {
 CircleIntersectionsPtr Line::getCircleIntersections( float cx, float cy,
 		                                             float r ) const
 {
+	CircleIntersectionsPtr intersect( new CircleIntersections );
 	//circle equation (let x,y be the coords of the intersections and be aware that
 	// there might be 2 intersections (x1,y1 and x2,y2))
 
+	//first handle special case of a vertical line
+	if( _isVertical ) {
+		intersect->x1 = _x1;
+		float d = abs( cx - _x1 );
+		if( d > r ) {
+			//no intersection
+			return intersect;
+		}
+		float u = sqrt( pow( r, 2 ) - pow( d, 2 ) );
+		intersect->y1 = cy + u;
+		if( d != r ) {
+			intersect->x2 = intersect->x1;
+			intersect->y2 = cy - (intersect->y1 - cy);
+			intersect->numberOfIntersections = 2;
+		} else {
+			intersect->numberOfIntersections = 1;
+		}
+		return intersect;
+	}
+
 	/*
-	 * Circle:  (x - cx)² + (y - cy)² = r2
+	 * Circle:  (x - cx)² + (y - cy)² = r²
 	 * Line  :  y = _m * x + _b
 	 *
 	 * Line in circle:
 	 * (x - cx)² + (_m * x + _b - cy)² = r² */
 	 float A = _b - cy;
-	 /* Solve for x:
-	 * x² - 2*cx*x + cx² + _m² * x² + 2*_m*x*A + A² = r²
+	 /* (x - cx)² + (_m*x + A)² = r²
+	 * Solve for x:
+	 * x² - 2*cx*x + cx² + _m²*x² + 2*_m*x*A + A² = r²
 	 * x² + _m²*x² - 2*cx*x + 2*_m*x*A + cx² + A² - r² = 0
-	 * (1 + _m²)*x² - (2*cx + 2*_m*A)*x + (cx² + A² - r²) = 0
+	 * (1 + _m²)*x² - (2*cx - 2*_m*A)*x + (cx² + A² - r²) = 0
 	 * use abc formula: */
 	 float a = 1 + pow( _m, 2 );
-	 float b = 2 * cx + 2 * _m * A;
+	 float b = (-1) * (2*cx - 2*_m*A);
 	 float c = pow( cx, 2 ) + pow( A, 2 ) - pow( r, 2 );
 	 //insert in formula
 	 float powb = pow( b, 2 );
 	 /*
 	  * numerator: (-b + sqrt( powb - 4*a*c )
 	  * denominator: 2*a */
-	 float root = sqrt( powb - 4*a*c );
+	 float B = powb - 4*a*c;
+	 if( B < 0 ) {
+		 //no intersection
+		 return intersect;
+	 }
+	 float root = sqrt( B );
 	 float denom = 2 * a;
 	 b *= (-1);
-	 float x1 = (b + root) / denom;
-	 float x2 = (b - root) / denom;
+	 intersect->x1 = (b + root) / denom;
+	 intersect->y1 = _m*intersect->x1 + _b;
+	 if( B > 0 ) {
+		 //two intersections
+		 intersect->x2 = (b - root) / denom;
+		 intersect->y2 = _m*intersect->x2 + _b;
+		 intersect->numberOfIntersections = 2;
+	 } else {
+		 intersect->numberOfIntersections = 1;
+	 }
 
-	//line
-
-
+	 return intersect;
 }
 
 
