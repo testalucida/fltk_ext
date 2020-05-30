@@ -114,7 +114,7 @@ int DragBox::handle(int e) {
 				_draggingPrepared = true;
 			} else {
 				_resizeHelper.prepareResizing(this);
-				fprintf( stderr, "prepare resize\n");
+				//fprintf( stderr, "prepare resize\n");
 			}
 		}
 
